@@ -5,25 +5,10 @@ import com.baomidou.mybatisplus.annotation.*;
 import java.time.LocalDateTime;
 
 @TableName("article")
-public class Article {
-    @TableId(type = IdType.AUTO)
-    private Long id;
+public class Article extends BaseEntity {
     private String title;
     private String content;
     private Long categoryId;
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
-
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
-
-    public LocalDateTime getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(LocalDateTime updateTime) {
-        this.updateTime = updateTime;
-    }
 
     private Long userId;
 
@@ -42,13 +27,6 @@ public class Article {
     public void setUserId(Long userId) {
         this.userId = userId;
     }
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getTitle() {
         return title;
@@ -66,13 +44,4 @@ public class Article {
         this.content = content;
     }
 
-
-
-    public LocalDateTime getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(LocalDateTime createTime) {
-        this.createTime = createTime;
-    }
 }

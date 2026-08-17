@@ -1,6 +1,7 @@
 package com.codersole.knowledgeserver.service.impl;
 
 import com.codersole.knowledgeserver.context.UserContext;
+import com.codersole.knowledgeserver.converter.FileConverter;
 import com.codersole.knowledgeserver.entity.FileInfo;
 import com.codersole.knowledgeserver.exception.BusinessException;
 import com.codersole.knowledgeserver.mapper.FileInfoMapper;
@@ -32,10 +33,12 @@ public class FileServiceImpl implements FileService {
     private static final long MAX_SIZE = 10 * 1024 * 1024;
     private static final Path UPLOAD_PATH = Paths.get("uploads").toAbsolutePath().normalize();
 
-    public FileServiceImpl(FileInfoMapper fileInfoMapper) {
-        this.fileInfoMapper = fileInfoMapper;
-    }
+    private final FileConverter fileConverter;
 
+    public FileServiceImpl(FileInfoMapper fileInfoMapper, FileConverter fileConverter) {
+        this.fileInfoMapper = fileInfoMapper;
+        this.fileConverter = fileConverter;
+    }
 
     @Override
     public FileVO upload(MultipartFile file) {
@@ -62,18 +65,17 @@ public class FileServiceImpl implements FileService {
         }
         String filename = UUID.randomUUID() + "." + suffix;
 
-
         String storedName =
 
-                UUID.randomUUID() + "." + suffix;
+            UUID.randomUUID() + "." + suffix;
 
         Path uploadDir =
 
-                Paths.get("uploads")
+            Paths.get("uploads")
 
-                        .toAbsolutePath()
+                .toAbsolutePath()
 
-                        .normalize();
+                .normalize();
 
         try {
 
@@ -81,7 +83,7 @@ public class FileServiceImpl implements FileService {
 
             Path filePath =
 
-                    uploadDir.resolve(storedName);
+                uploadDir.resolve(storedName);
 
             file.transferTo(filePath);
 
@@ -89,9 +91,9 @@ public class FileServiceImpl implements FileService {
 
             throw new BusinessException(
 
-                    500,
+                500,
 
-                    "文件上传失败"
+                "文件上传失败"
 
             );
 
@@ -99,7 +101,7 @@ public class FileServiceImpl implements FileService {
 
         String url =
 
-                "/uploads/" + storedName;
+            "/uploads/" + storedName;
 
         FileInfo fileInfo = new FileInfo();
 
@@ -115,25 +117,26 @@ public class FileServiceImpl implements FileService {
 
         fileInfo.setUserId(UserContext.getUserId());
 
-        fileInfo.setCreateTime(fileInfo.getCreateTime());
-
         fileInfoMapper.insert(fileInfo);
 
         // 暂时手动转换
 
-        FileVO vo = new FileVO();
+        // fileConverter.toVo(fileInfo);
+        // FileVO vo = new FileVO();
+        //
+        // vo.setId(fileInfo.getId());
+        //
+        // vo.setOriginalName(fileInfo.getOriginalName());
+        //
+        // vo.setUrl(fileInfo.getFilePath());
+        //
+        // vo.setFileSize(fileInfo.getFileSize());
+        //
+        // vo.setContentType(fileInfo.getContentType());
+        //
+        // vo.setCreateTime(fileInfo.getCreateTime());
 
-        vo.setId(fileInfo.getId());
-
-        vo.setOriginalName(fileInfo.getOriginalName());
-
-        vo.setUrl(fileInfo.getFilePath());
-
-        vo.setFileSize(fileInfo.getFileSize());
-
-        vo.setContentType(fileInfo.getContentType());
-
-        return vo;
+        return fileConverter.toVo(fileInfo);
     }
 
     @Override

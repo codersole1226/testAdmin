@@ -5,9 +5,7 @@ import com.baomidou.mybatisplus.annotation.*;
 import java.time.LocalDateTime;
 
 @TableName("file_info")
-public class FileInfo {
-    @TableId(type = IdType.AUTO)
-    private Long id;
+public class FileInfo extends BaseEntity {
 
     private String originalName;
     private String storedName;
@@ -16,27 +14,6 @@ public class FileInfo {
 
     private Long fileSize;
     private Long userId;
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
-
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
-
-    public LocalDateTime getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(LocalDateTime updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getOriginalName() {
         return originalName;
@@ -86,11 +63,4 @@ public class FileInfo {
         this.userId = userId;
     }
 
-    public LocalDateTime getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(LocalDateTime createTime) {
-        this.createTime = createTime;
-    }
 }

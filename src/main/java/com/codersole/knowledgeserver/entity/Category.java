@@ -7,42 +7,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.LocalDateTime;
 
 @TableName("category")
-public class Category {
-    @TableId(type = IdType.AUTO)
-    private Long id;
+public class Category extends BaseEntity {
 
     private String name;
     private String description;
-
-    private LocalDateTime createTime;
-
-//    public Category() {
-//    }
-//
-//    public Category(Long id, String name, String description, LocalDateTime createTime) {
-//        this.id = id;
-//        this.name = name;
-//        this.description = description;
-//        this.createTime = createTime;
-//    }
-
-    public LocalDateTime getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(LocalDateTime createTime) {
-        this.createTime = createTime;
-    }
-
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
