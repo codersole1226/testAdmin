@@ -63,79 +63,25 @@ public class FileServiceImpl implements FileService {
         if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType)) {
             throw new BusinessException(400, "不支持的文件类型");
         }
-        String filename = UUID.randomUUID() + "." + suffix;
-
-        String storedName =
-
-            UUID.randomUUID() + "." + suffix;
-
-        Path uploadDir =
-
-            Paths.get("uploads")
-
-                .toAbsolutePath()
-
-                .normalize();
+        String storedName = UUID.randomUUID() + "." + suffix;
 
         try {
-
-            Files.createDirectories(uploadDir);
-
-            Path filePath =
-
-                uploadDir.resolve(storedName);
-
+            Files.createDirectories(UPLOAD_PATH);
+            Path filePath = UPLOAD_PATH.resolve(storedName);
             file.transferTo(filePath);
-
         } catch (IOException e) {
-
-            throw new BusinessException(
-
-                500,
-
-                "文件上传失败"
-
-            );
-
+            throw new BusinessException(500, "文件上传失败");
         }
-
-        String url =
-
-            "/uploads/" + storedName;
+        String url = "/uploads/" + storedName;
 
         FileInfo fileInfo = new FileInfo();
-
         fileInfo.setOriginalName(originalFilename);
-
         fileInfo.setStoredName(storedName);
-
         fileInfo.setFilePath(url);
-
-        fileInfo.setContentType(file.getContentType());
-
+        fileInfo.setContentType(contentType);
         fileInfo.setFileSize(file.getSize());
-
         fileInfo.setUserId(UserContext.getUserId());
-
         fileInfoMapper.insert(fileInfo);
-
-        // 暂时手动转换
-
-        // fileConverter.toVo(fileInfo);
-        // FileVO vo = new FileVO();
-        //
-        // vo.setId(fileInfo.getId());
-        //
-        // vo.setOriginalName(fileInfo.getOriginalName());
-        //
-        // vo.setUrl(fileInfo.getFilePath());
-        //
-        // vo.setFileSize(fileInfo.getFileSize());
-        //
-        // vo.setContentType(fileInfo.getContentType());
-        //
-        // vo.setCreateTime(fileInfo.getCreateTime());
-
         return fileConverter.toVo(fileInfo);
     }
 

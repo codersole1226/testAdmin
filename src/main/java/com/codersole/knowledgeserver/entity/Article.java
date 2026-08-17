@@ -11,6 +11,15 @@ public class Article extends BaseEntity {
     private Long categoryId;
 
     private Long userId;
+    private Long viewCount;
+
+    public Long getViewCount() {
+        return viewCount;
+    }
+
+    public void setViewCount(Long viewCount) {
+        this.viewCount = viewCount;
+    }
 
     public Long getCategoryId() {
         return categoryId;

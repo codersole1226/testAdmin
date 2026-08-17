@@ -12,6 +12,16 @@ public class ArticleVO {
     private Long userId;
     private String authorName;
 
+    private Long viewCount;
+
+    public Long getViewCount() {
+        return viewCount;
+    }
+
+    public void setViewCount(Long viewCount) {
+        this.viewCount = viewCount;
+    }
+
     public Long getUserId() {
         return userId;
     }

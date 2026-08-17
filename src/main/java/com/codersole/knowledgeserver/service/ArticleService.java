@@ -15,4 +15,6 @@ public interface ArticleService {
     ArticleVO update(Long id,ArticleUpdateDTO dto);
 
     void delete(Long id);
+
+    ArticleVO getById(Long id);
 }

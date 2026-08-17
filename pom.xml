@@ -259,7 +259,6 @@
                             <version>${mapstruct.version}</version>
                         </path>
                     </annotationProcessorPaths>
-                    <proc>none</proc>
                 </configuration>
             </plugin>
         </plugins>

@@ -41,5 +41,8 @@ public interface ArticleMapper extends BaseMapper<Article> {
 //            """)
     ArticleVO selectVOById(@Param("id") Long id);
 
+    List<ArticleVO> selectVOByIds(@Param("ids") List<Long> ids);
     IPage<ArticleVO> selectVOPage(Page<ArticleVO> page, @Param("query")ArticleQueryDTO query);
+
+    void incrementViewCount(@Param("articleId") Long articleId, @Param("increment") Long increment);
 }
