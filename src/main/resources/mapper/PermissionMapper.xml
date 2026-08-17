@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codersole.knowledgeserver.mapper.PermissionMapper">
+
+
+    <select id="selectCodesByUserId" resultType="java.lang.String">
+        select distinct p.code
+        from permission p
+        join role_permission rp
+        on p.id = rp.permission_id
+        join user_role ur
+        on rp.role_id = ur.role_id
+        where ur.user_id = #{userId}
+    </select>
+</mapper>
