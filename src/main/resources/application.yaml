@@ -17,3 +17,9 @@ servlet:
   multipart:
     max-file-size: 10MB
     max-request-size: 10MB
+logging:
+  level:
+    root: INFO
+    com.codersole.knowledgeserver: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{traceId}] [%thread] %logger{36} - %msg%n"

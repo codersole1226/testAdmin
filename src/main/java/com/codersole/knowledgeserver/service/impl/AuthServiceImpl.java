@@ -9,7 +9,8 @@ import com.codersole.knowledgeserver.mapper.UserMapper;
 import com.codersole.knowledgeserver.service.AuthService;
 import com.codersole.knowledgeserver.util.JwtUtils;
 import com.codersole.knowledgeserver.vo.LoginVO;
-import com.codersole.knowledgeserver.vo.UserVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,8 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
 
     private final JwtUtils jwtUtils;
+
+    private static final Logger log =  LoggerFactory.getLogger(AuthServiceImpl.class);
 
     public AuthServiceImpl(UserMapper userMapper, UserConverter userConverter, PasswordEncoder passwordEncoder, JwtUtils jwtUtils) {
         this.userMapper = userMapper;
@@ -52,6 +55,7 @@ public class AuthServiceImpl implements AuthService {
         loginVO.setToken(token);
         loginVO.setUser(userConverter.toVo(existingUser));
 
+        log.info("用户登录成功!userId={}",existingUser.getId());
         return loginVO;
     }
 }
