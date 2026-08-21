@@ -1,0 +1,2 @@
+ALTER TABLE user
+ADD COLUMN last_login_at DATETIME NULL COMMENT '最后登录时间';
