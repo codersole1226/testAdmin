@@ -1,7 +1,6 @@
 services:
   knowledge-server:
-    image: crpi-85sk1zopzkn0bjux.cn-hangzhou.personal.cr.aliyuncs.com/codersole/knowledge-server:1.0.1
-
+    image: crpi-85sk1zopzkn0bjux.cn-hangzhou.personal.cr.aliyuncs.com/codersole/knowledge-server:${IMAGE_TAG}
     network_mode: host
 
     env_file:

@@ -1,9 +1,13 @@
-name: Build Docker Image
+name: Build and Deploy
 
 on:
   push:
     tags:
       - 'v*'
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -49,3 +53,89 @@ jobs:
           provenance: false
           sbom: false
           tags: crpi-85sk1zopzkn0bjux.cn-hangzhou.personal.cr.aliyuncs.com/codersole/knowledge-server:${{ steps.version.outputs.VERSION }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.ECS_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "${{ secrets.ECS_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy to ECS
+        env:
+          ECS_HOST: ${{ secrets.ECS_HOST }}
+          ECS_USER: ${{ secrets.ECS_USER }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+
+          ssh "$ECS_USER@$ECS_HOST" "VERSION='$VERSION' bash -s" <<'REMOTE'
+          set -u
+
+          cd /home/deploy/knowledge-server
+
+          OLD_VERSION=$(sed -n 's/^IMAGE_TAG=//p' deploy.env)
+
+          echo "Current version: $OLD_VERSION"
+          echo "Deploy version:  $VERSION"
+
+          echo "IMAGE_TAG=$VERSION" > deploy.env.tmp
+          mv deploy.env.tmp deploy.env
+
+          if ! docker compose --env-file deploy.env -f compose.prod.yaml pull knowledge-server; then
+            echo "Image pull failed."
+            echo "IMAGE_TAG=$OLD_VERSION" > deploy.env
+            exit 1
+          fi
+
+          if ! docker compose --env-file deploy.env -f compose.prod.yaml up -d knowledge-server; then
+            echo "Container deployment failed."
+            echo "IMAGE_TAG=$OLD_VERSION" > deploy.env
+            docker compose --env-file deploy.env -f compose.prod.yaml up -d knowledge-server
+            exit 1
+          fi
+
+          echo "Waiting for health check..."
+
+          HEALTHY=false
+
+          for i in $(seq 1 30); do
+            if curl -fsS --max-time 2 http://127.0.0.1:8080/actuator/health 2>/dev/null | grep -q '"status":"UP"'; then
+              HEALTHY=true
+              break
+            fi
+
+            echo "Health check $i/30"
+            sleep 2
+          done
+
+          if [ "$HEALTHY" = true ]; then
+            echo "Deploy SUCCESS: $VERSION"
+            exit 0
+          fi
+
+          echo "Deploy FAILED. Rolling back to $OLD_VERSION..."
+
+          echo "IMAGE_TAG=$OLD_VERSION" > deploy.env
+
+          docker compose --env-file deploy.env -f compose.prod.yaml pull knowledge-server
+          docker compose --env-file deploy.env -f compose.prod.yaml up -d knowledge-server
+
+          for i in $(seq 1 30); do
+            if curl -fsS --max-time 2 http://127.0.0.1:8080/actuator/health 2>/dev/null | grep -q '"status":"UP"'; then
+              echo "Rollback SUCCESS: $OLD_VERSION"
+              exit 1
+            fi
+
+            echo "Rollback health check $i/30"
+            sleep 2
+          done
+
+          echo "CRITICAL: rollback is unhealthy."
+          exit 1
+          REMOTE
