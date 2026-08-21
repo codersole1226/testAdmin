@@ -1,0 +1,14 @@
+services:
+  knowledge-server:
+    image: crpi-85sk1zopzkn0bjux.cn-hangzhou.personal.cr.aliyuncs.com/codersole/knowledge-server:1.0.1
+
+    network_mode: host
+
+    env_file:
+      - /etc/knowledge-server/knowledge-server.env
+
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      JAVA_OPTS: "-Xms256m -Xmx512m"
+
+    restart: unless-stopped
