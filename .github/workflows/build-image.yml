@@ -46,4 +46,6 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64
-          tags: crpi-85sk1zopzkn0bjux.cn-hangzhou.personal.cr.aliyuncs.com/codersole/knowledge-server:${{ steps.version.outputs.VERSION }}
+          provenance: false
+          sbom: false
+          tags: crpi-85sk1zopzkn0bjux.cn-hangzhou.personal.cr.aliyuncs.com/codersole/knowledge-server:${{ steps.version.outputs.VERSION }} crpi-85sk1zopzkn0bjux.cn-hangzhou.personal.cr.aliyuncs.com/codersole/knowledge-server:${{ steps.version.outputs.VERSION }}
