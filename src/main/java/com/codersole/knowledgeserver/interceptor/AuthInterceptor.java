@@ -8,6 +8,8 @@ import com.codersole.knowledgeserver.service.PermissionService;
 import com.codersole.knowledgeserver.util.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -17,6 +19,7 @@ import java.util.List;
 public class AuthInterceptor implements HandlerInterceptor {
     private final JwtUtils jwtUtils;
     private final PermissionService permissionService;
+    private static final Logger log = LoggerFactory.getLogger(AuthInterceptor.class);
 
     public AuthInterceptor(JwtUtils jwtUtils, PermissionService permissionService) {
         this.jwtUtils = jwtUtils;
@@ -25,6 +28,19 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        log.info(
+
+                "AuthInterceptor request: method={}, uri={}, servletPath={}, dispatcherType={}",
+
+                request.getMethod(),
+
+                request.getRequestURI(),
+
+                request.getServletPath(),
+
+                request.getDispatcherType()
+
+        );
         String authorization = request.getHeader("Authorization");
 
         if (authorization == null || !authorization.startsWith("Bearer ")) {
