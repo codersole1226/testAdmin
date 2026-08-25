@@ -4,12 +4,16 @@ import com.codersole.knowledgeserver.interceptor.AuthInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.*;
 
+import java.rmi.registry.Registry;
+
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     private final AuthInterceptor authInterceptor;
+    private final CorsProperties corsProperties;
 
-    public WebConfig(AuthInterceptor authInterceptor) {
+    public WebConfig(AuthInterceptor authInterceptor, CorsProperties corsProperties) {
         this.authInterceptor = authInterceptor;
+        this.corsProperties = corsProperties;
     }
 
     @Override
@@ -30,7 +34,12 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("http://localhost:5173")
-            .allowedMethods("GET", "POST", "DELETE", "PUT", "OPTIONS").allowedHeaders("*").allowCredentials(true);
+        if (corsProperties.getAllowedOrigins().isEmpty()) {
+
+            return;
+
+        }
+        registry.addMapping("/**").allowedOrigins(corsProperties.getAllowedOrigins().toArray(new String[0])
+        ).allowedMethods("GET", "POST", "DELETE", "PUT", "OPTIONS").allowedHeaders("*").allowCredentials(true);
     }
 }

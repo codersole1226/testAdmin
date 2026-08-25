@@ -1,8 +1,6 @@
 spring:
   flyway:
-
     enabled: true
-
     locations: classpath:db/migration
   datasource:
     url: ${DB_URL}
@@ -34,3 +32,7 @@ management:
     health:
 
       show-details: never
+
+app:
+  cors:
+    allowed-origins:[]
